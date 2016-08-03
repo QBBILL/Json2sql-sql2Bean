@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <File name="File" fileName="log/ap.log">
+            <PatternLayout>
+                <pattern>%d %p  %m%n</pattern>
+            </PatternLayout>
+        </File>
+        <File name="Message" fileName="log/line.log">
+            <PatternLayout>
+                <!-- 只输出文本信息和换行符-->
+                <pattern>%m%n</pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <!--<AppenderRef ref="File"/>-->
+        </Root>
+        <!-- 自定义logger,root相当于根节点。你所有的logger都继承了root,所以additivity="false"表示不再输出root的输出信息-->
+        <!--<logger name="message" level="info" additivity="false" >
+            <appender-ref ref="Message"/>
+        </logger>-->
+    </Loggers>
+</Configuration>
