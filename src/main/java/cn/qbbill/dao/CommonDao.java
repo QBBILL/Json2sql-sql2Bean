@@ -1,20 +1,20 @@
 package cn.qbbill.dao;
 
 import cn.qbbill.bean.SqlData;
+import cn.qbbill.util.CreateBeanUtil;
 import cn.qbbill.util.SqlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Map;
 
 /**
@@ -29,6 +29,9 @@ public class CommonDao {
 
     @Autowired
     private SqlUtil sqlUtils;
+
+    @Autowired
+    private CreateBeanUtil createBeanUtil;
 
     public Long saveTableMap(String tableName, Map<String, Object> result) {
         final SqlData sqlData = sqlUtils.converMapToSql(tableName, result);
@@ -60,5 +63,32 @@ public class CommonDao {
             }
         }
         return null;
+    }
+
+    /**
+     * 返回查询结果元数据
+     * @param sql
+     * @return
+     */
+    public ResultSetMetaData getResultSetMetaData(String sql) {
+        ResultSetMetaData metaData = jdbcTemplate.query(sql,
+                new ResultSetExtractor<ResultSetMetaData>() {
+                    @Override
+                    public ResultSetMetaData extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+                        return resultSet.getMetaData();
+                    }
+                }
+        );
+        return metaData;
+    }
+
+    /**
+     *
+     * @param sql
+     * @param packageName "cn.qbbill.bean.GeneratedBean"
+     */
+    public void generateBean(String sql, String packageName){
+        ResultSetMetaData resultSetMetaData = getResultSetMetaData(sql);
+        createBeanUtil.createJavaBean(resultSetMetaData, packageName, true);
     }
 }

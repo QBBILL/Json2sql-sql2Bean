@@ -40,4 +40,9 @@ public class TestJsonUtil {
         map.put("tdid", "1234");
         commonDao.saveTableMap("tdid_account", map);
     }
+
+   @Test
+    public  void testGenerateBean(){
+        commonDao.generateBean("select * from batch_job_execution","cn.qbbill.bean.GeneratedBean");
+    }
 }
